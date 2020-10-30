@@ -1,15 +1,26 @@
 {
   "name": "ecomerce",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": " node backend/server"
   },
   "keywords": [
     "\u001b[A\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C",
     "https://github.com/Dobaizsolt97/recom.git"
   ],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dobaizsolt97/recom.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Dobaizsolt97/recom/issues"
+  },
+  "homepage": "https://github.com/Dobaizsolt97/recom#readme",
+  "description": "",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
 }
