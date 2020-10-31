@@ -1,14 +1,15 @@
 //the import statements are available beacuse in the package.json file we have added the flag, "type":"module"
 import express from "express";
-import products from "./data/products.js";
 import dotenv from "dotenv";
 import connectDB from "./config/db.js";
 import colors from "colors";
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 import productRoutes from "./routes/productRoutes.js";
-dotenv.config();
-connectDB();
 
+dotenv.config();
+//connecting to Mongo
+connectDB();
+//initialize the app
 const app = express();
 const PORT = process.env.PORT || 5000;
 app.listen(
