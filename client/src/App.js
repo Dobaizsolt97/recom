@@ -8,12 +8,14 @@ import { Container } from "react-bootstrap";
 import { Route } from "react-router-dom";
 import RegisterScreen from "./screens/RegisterScreen";
 import ProfileScreen from "./screens/ProfileScreen";
+import ShippingScreen from "./screens/ShippingScreen";
 const App = () => {
   return (
     <>
       <Header />
       <main className="py-3">
         <Container>
+          <Route path="/shipping" component={ShippingScreen} />
           <Route path="/profile" component={ProfileScreen} />
           <Route path="/register" component={RegisterScreen} />
           <Route path="/login" component={LoginScreen} />

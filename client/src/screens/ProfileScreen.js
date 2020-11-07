@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+
 import { Row, Col, Button, Form } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import ErrorMessage from "../components/ErrorMessage";
 import Loader from "../components/Loader";
-import { getUserDetails } from "../actions/userActions";
+import { getUserDetails, updateUserProfile } from "../actions/userActions";
+import { USER_UPDATE_PROFILE_RESET } from "../constants/profileConstants";
 
 const ProfileScreen = ({ history }) => {
   const [email, setEmail] = useState("");
@@ -17,25 +18,28 @@ const ProfileScreen = ({ history }) => {
   const { loading, error, user } = userDetails;
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
+  const userUpdateProfile = useSelector((state) => state.userUpdateProfile);
+  const { success } = userUpdateProfile;
 
   useEffect(() => {
     if (!userInfo) {
       history.push("/login");
     } else {
-      if (!user.name) {
+      if (!user || !user.name || success) {
+        dispatch({ type: USER_UPDATE_PROFILE_RESET });
         dispatch(getUserDetails("profile"));
       } else {
         setName(user.name);
         setEmail(user.email);
       }
     }
-  }, [history, userInfo, user, dispatch]);
+  }, [history, userInfo, user, dispatch, success]);
   const submitHandler = (e) => {
     e.preventDefault();
     if (password !== confirmPassword) {
       setMessage("Passwords do not match");
     } else {
-      //Disaptch update profile
+      dispatch(updateUserProfile({ id: user._id, name, email, password }));
     }
   };
 
@@ -44,6 +48,9 @@ const ProfileScreen = ({ history }) => {
       <Col md={3}>
         {message && <ErrorMessage variant="danger">{message}</ErrorMessage>}
         {error && <ErrorMessage variant="danger">{error}</ErrorMessage>}
+        {success && (
+          <ErrorMessage variant="success">{"Changes were saved!"}</ErrorMessage>
+        )}
         {loading && <Loader />}
         <h2>User profile</h2>
         <Form onSubmit={submitHandler}>

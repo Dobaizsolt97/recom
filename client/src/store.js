@@ -10,6 +10,7 @@ import {
   userLoginReducer,
   userRegisterReducer,
   userDetailsReducer,
+  userUpdateProfileReducer,
 } from "./reducers/userReducers";
 
 // The root reducer is the combination of all the reducers
@@ -20,6 +21,7 @@ const rootReducer = combineReducers({
   userLogin: userLoginReducer,
   userRegister: userRegisterReducer,
   userDetails: userDetailsReducer,
+  userUpdateProfile: userUpdateProfileReducer,
 });
 const middleware = [thunk];
 
@@ -30,8 +32,14 @@ const cartItemsFromStorrage = localStorage.getItem("cartItems")
 const userInfoFromStorrage = localStorage.getItem("userInfo")
   ? JSON.parse(localStorage.getItem("userInfo"))
   : null;
+const shippingAdressFromStorrage = localStorage.getItem("shippingAdress")
+  ? JSON.parse(localStorage.getItem("shippingAdress"))
+  : {};
 const initialState = {
-  cart: { cartItems: cartItemsFromStorrage },
+  cart: {
+    cartItems: cartItemsFromStorrage,
+    shippingAdress: shippingAdressFromStorrage,
+  },
   userLogin: { userInfo: userInfoFromStorrage },
 };
 
