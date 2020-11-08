@@ -12,7 +12,10 @@ import {
   userDetailsReducer,
   userUpdateProfileReducer,
 } from "./reducers/userReducers";
-import { orderCreateReducer } from "./reducers/orderReducers";
+import {
+  orderCreateReducer,
+  orderDetailsReducer,
+} from "./reducers/orderReducers";
 // The root reducer is the combination of all the reducers
 const rootReducer = combineReducers({
   productList: productListReducer,
@@ -23,6 +26,7 @@ const rootReducer = combineReducers({
   userDetails: userDetailsReducer,
   userUpdateProfile: userUpdateProfileReducer,
   orderCreate: orderCreateReducer,
+  orderDetails: orderDetailsReducer,
 });
 const middleware = [thunk];
 
