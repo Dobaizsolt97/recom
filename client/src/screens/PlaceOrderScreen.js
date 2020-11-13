@@ -13,6 +13,7 @@ import { useDispatch, useSelector } from "react-redux";
 import ErrorMessage from "../components/ErrorMessage";
 import CheckoutComponent from "../components/CheckoutComponent";
 import { Link } from "react-router-dom";
+
 const PlaceOrderScreen = ({ history }) => {
   const addDecimals = (num) => {
     return (Math.round(num * 100) / 100).toFixed(2);
@@ -25,7 +26,7 @@ const PlaceOrderScreen = ({ history }) => {
     if (success) {
       history.push(`/order/${order._id}`);
     }
-  }, [history, success]);
+  }, [history, success, order._id]);
   const placeOrderHandler = () => {
     dispatch(
       createOrder({
