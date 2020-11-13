@@ -4,7 +4,7 @@ import { Table, Button } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import ErrorMessage from "../components/ErrorMessage";
 import Loader from "../components/Loader";
-import { listUsers } from "../actions/userActions";
+import { listUsers, deleteUser } from "../actions/userActions";
 
 const UserListScreen = ({ history }) => {
   const dispatch = useDispatch();
@@ -12,6 +12,8 @@ const UserListScreen = ({ history }) => {
   const { users, loading, error } = userList;
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
+  const userDelete = useSelector((state) => state.userDelete);
+  const { success: deleteSuccess, error: deleteError } = userDelete;
 
   useEffect(() => {
     if (userInfo && userInfo.isAdmin) {
@@ -19,11 +21,19 @@ const UserListScreen = ({ history }) => {
     } else {
       history.push("/login");
     }
-  }, [dispatch, history]);
-  const deleteHandler = () => {};
+  }, [dispatch, history, deleteSuccess]);
+  const deleteHandler = (id) => {
+    if (window.confirm("Are you sure?")) dispatch(deleteUser(id));
+  };
   return (
     <>
       <h1>Users</h1>
+      {deleteSuccess && (
+        <ErrorMessage variant="success">User deleted</ErrorMessage>
+      )}
+      {deleteError && (
+        <ErrorMessage variant="danger">{deleteError}</ErrorMessage>
+      )}
       {loading ? (
         <Loader />
       ) : error ? (
@@ -61,7 +71,7 @@ const UserListScreen = ({ history }) => {
                     </Button>
                   </LinkContainer>
                   <Button
-                    onClick={deleteHandler(user._id)}
+                    onClick={() => deleteHandler(user._id)}
                     className="btn-sm"
                     variant="danger"
                   >
