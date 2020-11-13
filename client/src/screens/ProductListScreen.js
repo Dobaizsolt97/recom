@@ -4,30 +4,59 @@ import { Table, Button, Row, Col } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import ErrorMessage from "../components/ErrorMessage";
 import Loader from "../components/Loader";
-import { listProducts } from "../actions/productActions";
-
+import {
+  listProducts,
+  deleteProduct,
+  createProduct,
+} from "../actions/productActions";
+import { PRODUCT_CREATE_RESET } from "../constants/productConstants";
 const ProductListScreen = ({ history, match }) => {
   const dispatch = useDispatch();
 
   const productList = useSelector((state) => state.productList);
   const { products, loading, error } = productList;
+  const productDelete = useSelector((state) => state.productDelete);
+  const {
+    loading: loadingDelete,
+    error: errorDelete,
+    success: successDelete,
+  } = productDelete;
+  const productCreate = useSelector((state) => state.productCreate);
+  const {
+    loading: loadingCreate,
+    error: errorCreate,
+    success: successCreate,
+    product: createdProduct,
+  } = productCreate;
 
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
 
-  const createProductHandler = (product) => {
-    //create Product
+  const createProductHandler = () => {
+    dispatch(createProduct());
   };
   useEffect(() => {
-    if (userInfo && userInfo.isAdmin) {
-      dispatch(listProducts());
-    } else {
+    dispatch({ type: PRODUCT_CREATE_RESET });
+
+    if (!userInfo.isAdmin) {
       history.push("/login");
     }
-  }, [dispatch, history, userInfo]);
+    if (successCreate) {
+      history.push(`/admin/product/${createdProduct._id}/edit`);
+    } else {
+      dispatch(listProducts());
+    }
+  }, [
+    dispatch,
+    history,
+    userInfo,
+    successDelete,
+    successCreate,
+    createdProduct,
+  ]);
   const deleteHandler = (id) => {
     if (window.confirm("Are you sure?")) {
-      //delete products
+      dispatch(deleteProduct(id));
     }
   };
   return (
@@ -42,7 +71,14 @@ const ProductListScreen = ({ history, match }) => {
           </Button>
         </Col>
       </Row>
-
+      {loadingDelete && <Loader />}
+      {errorDelete && (
+        <ErrorMessage variant="danger">{errorDelete}</ErrorMessage>
+      )}
+      {loadingCreate && <Loader />}
+      {errorCreate && (
+        <ErrorMessage variant="danger">{errorCreate}</ErrorMessage>
+      )}
       {loading ? (
         <Loader />
       ) : error ? (
