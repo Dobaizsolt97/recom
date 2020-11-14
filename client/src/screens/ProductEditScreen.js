@@ -5,12 +5,23 @@ import { useDispatch, useSelector } from "react-redux";
 import ErrorMessage from "../components/ErrorMessage";
 import Loader from "../components/Loader";
 import FormContainer from "../components/FormContaier";
-import { listProductsDetails } from "../actions/productActions";
+import { listProductsDetails, updateProduct } from "../actions/productActions";
+import {
+  PRODUCT_UPDATE_RESET,
+  PRODUCTS_DETAILS_RESET,
+} from "../constants/productConstants";
+import Axios from "axios";
 
 const ProductEditScreen = ({ match, history }) => {
   const dispatch = useDispatch();
   const productDetails = useSelector((state) => state.productDetails);
   const { product, loading, error } = productDetails;
+  const productUpdate = useSelector((state) => state.productUpdate);
+  const {
+    success: updateSuccess,
+    loading: updateLoading,
+    error: updateError,
+  } = productUpdate;
   const productId = match.params.id;
   const [price, setPrice] = useState(0);
   const [image, setImage] = useState("");
@@ -19,21 +30,29 @@ const ProductEditScreen = ({ match, history }) => {
   const [category, setCategory] = useState("");
   const [countInStock, setCountInStock] = useState(0);
   const [description, setDescription] = useState("");
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
-    if (!product.name || product._id !== productId) {
-      dispatch(listProductsDetails(productId));
+    if (updateSuccess) {
+      dispatch({ type: PRODUCT_UPDATE_RESET });
+      dispatch({ type: PRODUCTS_DETAILS_RESET });
+      history.push("/admin/productList");
     } else {
-      setName(product.name);
-      setPrice(product.price);
-      setImage(product.image);
-      setBrand(product.brand);
-      setCategory(product.category);
-      setCountInStock(product.countInStock);
-      setDescription(product.description);
+      if (!product.name || product._id !== productId) {
+        dispatch(listProductsDetails(productId));
+      } else {
+        setName(product.name);
+        setPrice(product.price);
+        setImage(product.image);
+        setBrand(product.brand);
+        setCategory(product.category);
+        setCountInStock(product.countInStock);
+        setDescription(product.description);
+      }
     }
   }, [
     dispatch,
+    history,
     productId,
     product.name,
     product.price,
@@ -43,10 +62,41 @@ const ProductEditScreen = ({ match, history }) => {
     product.image,
     product.description,
     product._id,
+    updateSuccess,
   ]);
   const submitHandler = (e) => {
     e.preventDefault();
-    //update
+    dispatch(
+      updateProduct({
+        _id: productId,
+        name,
+        price,
+        image,
+        category,
+        brand,
+        description,
+        countInStock,
+      })
+    );
+  };
+  const uploadFileHandler = async (e) => {
+    const file = e.target.files[0];
+    const formData = new FormData();
+    formData.append("image", file);
+    setUploading(true);
+    try {
+      const config = {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      };
+      const { data } = await Axios.post("/api/upload", formData, config);
+      setImage(data);
+      setUploading(false);
+    } catch (error) {
+      console.error(error);
+      setUploading(false);
+    }
   };
   console.log(product);
   return (
@@ -56,7 +106,10 @@ const ProductEditScreen = ({ match, history }) => {
       </Link>
       <FormContainer>
         <h1>Edit Product</h1>
-
+        {updateLoading && <Loader />}
+        {updateError && (
+          <ErrorMessage variant="danger">{ErrorMessage}</ErrorMessage>
+        )}
         {loading ? (
           <Loader />
         ) : error ? (
@@ -84,11 +137,18 @@ const ProductEditScreen = ({ match, history }) => {
             <Form.Group controlId="image">
               <Form.Label>Image</Form.Label>
               <Form.Control
-                type="string"
+                type="text"
                 placeholder="Enter Image URL"
                 value={image}
                 onChange={(e) => setImage(e.target.value)}
               ></Form.Control>
+              <Form.File
+                id="image-file"
+                label="Choose File"
+                custom
+                onChange={uploadFileHandler}
+              ></Form.File>
+              {uploading && <Loader />}
             </Form.Group>
             <Form.Group controlId="brand">
               <Form.Label>Brand</Form.Label>

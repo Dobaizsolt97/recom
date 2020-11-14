@@ -83,8 +83,6 @@ const updateProduct = asyncHandler(async (req, res) => {
     res.status(404);
     throw new Error("Product not found");
   }
-  const updatedProduct = await product.save();
-  res.status(201).json(updatedProduct);
 });
 
 export {
