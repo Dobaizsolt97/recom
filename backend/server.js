@@ -34,11 +34,20 @@ app.use("/api/products", productRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/upload", uploadRoutes);
-app.get("/", (req, res) => {
-  res.send("api is running");
-});
+
 const __dirname = path.resolve();
 app.use("/uploads", express.static(path.join(__dirname, "/uploads")));
+
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "/client/build")));
+} else {
+  app.get("/", (req, res) => {
+    res.send("api is running");
+  });
+}
+app.get("*", (req, res) =>
+  res.sendFile(path.resolve(__dirname, "/client", "build", "index.html"))
+);
 
 app.use(notFound);
 
