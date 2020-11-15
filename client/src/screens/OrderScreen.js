@@ -56,7 +56,7 @@ const OrderScreen = ({ match, history }) => {
         setSdkReady(true);
       }
     }
-  }, [dispatch, history, order, successPay, successDeliver, orderId]);
+  }, [dispatch, history, order, successPay, userInfo, successDeliver, orderId]);
 
   if (!loading) {
     const addDecimals = (num) => {
