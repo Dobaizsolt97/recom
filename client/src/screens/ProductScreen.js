@@ -19,6 +19,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Loader from "../components/Loader";
 import ErrorMessage from "../components/ErrorMessage";
 import { PRODUCT_CREATE_REVIEW_RESET } from "../constants/productConstants";
+import Meta from "../components/Meta";
 
 const ProductScreen = ({ match, history }) => {
   const [qty, setQty] = useState(1);
@@ -66,6 +67,7 @@ const ProductScreen = ({ match, history }) => {
         <ErrorMessage />
       ) : (
         <>
+          <Meta title={product.name} />
           <Row>
             <Col md={6}>
               <Image src={product.image} alt={product.name} fluid />
